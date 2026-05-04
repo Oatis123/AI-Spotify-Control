@@ -79,31 +79,84 @@ class SpotifyController:
                 'id': track['id'],
                 'name': track['name'],
                 'artist': track['artists'][0]['name'],
-                'album': track['album']['name'],
-                'duration_ms': track['duration_ms']
+                'album': track['album']['name']
             }
             filtered_tracks.append(track_data)
             
         logger.debug(f"Search found {len(filtered_tracks)} tracks")
         return filtered_tracks
     
-    def play_by_id(self, track_id):
+    def search_playlists(self, query, limit=10):
+        logger.info(f"Searching for playlists with query: {query}")
+        results = self.sp.search(q=query, limit=limit, type='playlist')
+        items = results['playlists']['items']
+        
+        filtered_playlists = []
+        for playlist in items:
+            track_data = {
+                'id': playlist['id'],
+                'name': playlist['name'],
+                'owner': playlist['owner']['display_name'],
+                'description': playlist['description']
+            }
+            filtered_playlists.append(track_data)
+            
+        logger.debug(f"Search found {len(filtered_playlists)} tracks")
+        return filtered_playlists 
+
+    def search_albums(self, query, limit=10):
+        logger.info(f"Searching for albums with query: {query}")
+        results = self.sp.search(q=query, limit=limit, type='album')
+        items = results['albums']['items']
+        
+        filtered_albums = []
+        for album in items:
+            album_data = {
+                'id': album['items']['id'],
+                'name': album['items']['name'],
+                'artist': album['items']['artists'][0]['name']
+            }
+            filtered_albums.append(album_data)
+            
+        logger.debug(f"Search found {len(filtered_albums)} albums")
+        return filtered_albums
+
+    def search_playlists(self, query, limit=10):
+        logger.info(f"Searching for playlists with query: {query}")
+        results = self.sp.search(q=query, limit=limit, type='playlist')
+        items = results['playlists']['items']
+        
+        filtered_playlists = []
+        for playlist in items:
+            track_data = {
+                'id': playlist['id'],
+                'name': playlist['name']
+            }
+            filtered_playlists.append(track_data)
+            
+        logger.debug(f"Search found {len(filtered_playlists)} tracks")
+        return filtered_playlists       
+    
+    def play_track_by_id(self, track_id):
         logger.info(f"Playing track with ID: {track_id}")
         device_id = self.get_device_id()
         uri = f"spotify:track:{track_id}" if not track_id.startswith("spotify:") else track_id
         self.sp.start_playback(device_id=device_id, uris=[uri])
         return True
-
-    def play_search_top_10(self, query):
-        logger.info(f"Playing top 10 results for query: {query}")
-        tracks = self.search_tracks(query, limit=10)
-        if not tracks:
-            logger.warning("No tracks found to play")
-            return False
+    
+    def play_playlist_by_id(self, playlist_id):
+        logger.info(f"Playing track with ID: {playlist_id}")
         device_id = self.get_device_id()
-        uris = [t['uri'] for t in tracks]
-        self.sp.start_playback(device_id=device_id, uris=uris)
+        uri = f"spotify:playlist:{playlist_id}" if not playlist_id.startswith("spotify:") else playlist_id
+        self.sp.start_playback(device_id=device_id, uris=[uri])
         return True
+        
+    def play_album_by_id(self, album_id):
+        logger.info(f"Playing album with ID: {album_id}")
+        device_id = self.get_device_id()
+        uri = f"spotify:album:{album_id}" if not album_id.startswith("spotify:") else album_id
+        self.sp.start_playback(device_id=device_id, uris=[uri])
+        return True        
 
     def play_specific_track(self, track_name_or_uri):
         logger.info(f"Playing specific track: {track_name_or_uri}")
@@ -144,6 +197,8 @@ class SpotifyController:
         device_id = self.get_device_id()
         self.sp.shuffle(state=state, device_id=device_id)
         return True
+    
+
         
 
 sc = SpotifyController(device_name="DESKTOP-PLNF0UP")

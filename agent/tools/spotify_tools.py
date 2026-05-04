@@ -52,16 +52,51 @@ def search_tracks(query: str):
     logger.info(f"Calling tool: search_tracks (query='{query}')")
     return sc.search_tracks(query=query)
 
+@tool 
+def search_playlists(query: str):
+    """
+    Search for playlists in Spotify by title, artist, or keywords.
+    Returns a list of playlists with their ID and title.
+    """
+    logger.info(f"Calling tool: search_playlists (query='{query}')")
+    return sc.search_playlists(query=query)
+
+@tool 
+def search_albums(query: str):
+    """
+    Search for albums in Spotify by title, artist, or keywords.
+    Returns a list of albums with their ID, title, and artist.
+    """
+    logger.info(f"Calling tool: search_albums (query='{query}')")
+    return sc.search_albums(query=query)
+
 @tool
-def play_by_id(track_id: str):
+def play_track_by_id(track_id: str):
     """
     Play a specific Spotify track using its unique ID.
     The argument track_id is a string (e.g., from search results).
     """
-    logger.info(f"Calling tool: play_by_id (id='{track_id}')")
+    logger.info(f"Calling tool: play_track_by_id (id='{track_id}')")
     sc.play_by_id(track_id=track_id)
+
+@tool
+def play_playlist_by_id(playlist_id: str):
+    """
+    Play a specific Spotify playlist using its unique ID.
+    The argument playlist_id is a string (e.g., from search results).
+    """
+    logger.info(f"Calling tool: play_playlist_by_id (id='{playlist_id}')")
+    sc.play_by_id(playlist_id=playlist_id)
     
-    
+@tool
+def play_album_by_id(album_id: str):
+    """
+    Play a specific Spotify album using its unique ID.
+    The argument album_id is a string (e.g., from search results).
+    """
+    logger.info(f"Calling tool: play_album_by_id (id='{album_id}')")
+    sc.play_by_id(album_id=album_id)
+
 @tool
 def set_repeat(mode: str = "context"):
     """
