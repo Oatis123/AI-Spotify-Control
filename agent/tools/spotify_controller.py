@@ -93,13 +93,13 @@ class SpotifyController:
         
         filtered_playlists = []
         for playlist in items:
-            track_data = {
+            playlist_data = {
                 'id': playlist['id'],
                 'name': playlist['name'],
                 'owner': playlist['owner']['display_name'],
                 'description': playlist['description']
             }
-            filtered_playlists.append(track_data)
+            filtered_playlists.append(playlist_data)
             
         logger.debug(f"Search found {len(filtered_playlists)} tracks")
         return filtered_playlists 
@@ -121,21 +121,21 @@ class SpotifyController:
         logger.debug(f"Search found {len(filtered_albums)} albums")
         return filtered_albums
 
-    def search_playlists(self, query, limit=10):
-        logger.info(f"Searching for playlists with query: {query}")
-        results = self.sp.search(q=query, limit=limit, type='playlist')
-        items = results['playlists']['items']
+    # def search_playlists(self, query, limit=10):
+    #     logger.info(f"Searching for playlists with query: {query}")
+    #     results = self.sp.search(q=query, limit=limit, type='playlist')
+    #     items = results['playlists']['items']
         
-        filtered_playlists = []
-        for playlist in items:
-            track_data = {
-                'id': playlist['id'],
-                'name': playlist['name']
-            }
-            filtered_playlists.append(track_data)
+    #     filtered_playlists = []
+    #     for playlist in items:
+    #         track_data = {
+    #             'id': playlist['id'],
+    #             'name': playlist['name']
+    #         }
+    #         filtered_playlists.append(track_data)
             
-        logger.debug(f"Search found {len(filtered_playlists)} tracks")
-        return filtered_playlists       
+    #     logger.debug(f"Search found {len(filtered_playlists)} tracks")
+    #     return filtered_playlists       
     
     def play_track_by_id(self, track_id):
         logger.info(f"Playing track with ID: {track_id}")
