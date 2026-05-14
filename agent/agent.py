@@ -4,7 +4,7 @@ from langgraph.graph.message import add_messages
 from typing import TypedDict, Annotated, Generator
 import logging
 from .tools.spotify_tools import *
-from .models import qwen35_flash
+from .models import qwen35_flash, gpt_oss_120b, llama4_Scout
 from .prompt import system_prompt
 
 logger = logging.getLogger(__name__)
@@ -14,9 +14,13 @@ tools = [pause,
          next_track, 
          previous_track,
          get_playlists, 
-         play_playlist,
+         play_playlist_by_name,
          search_tracks,
-         play_by_id,
+         search_playlists,
+         search_albums,
+         play_track_by_id,
+         play_playlist_by_id,
+         play_album_by_id,
          set_repeat,
          set_shuffle]
 
@@ -31,7 +35,7 @@ graph_break_tools = ["pause",
                      "set_repeat",
                      "set_shuffle"]
 
-model = qwen35_flash.bind_tools(
+model = llama4_Scout.bind_tools(
     tools = tools
 )
 

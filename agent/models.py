@@ -16,5 +16,33 @@ qwen35_flash = ChatOpenAI(
     model="qwen/qwen3.5-flash-02-23",
     api_key=OPENROUTER_API_KEY,
     base_url=BASE_URL,
-    temperature=0.5
+    temperature=0.1
+)
+
+gpt_oss_120b = ChatOpenAI(
+    model="openai/gpt-oss-120b",
+    api_key=OPENROUTER_API_KEY,
+    base_url=BASE_URL,
+    temperature=0.1,
+    extra_body={
+        "provider": {
+            "order": ["groq"],
+            "allow_fallbacks": True,
+            "ignore": ["google-vertex"],
+        }
+    }
+)
+
+llama4_Scout = ChatOpenAI(
+    model="meta-llama/llama-4-scout",
+    api_key=OPENROUTER_API_KEY,
+    base_url=BASE_URL,
+    temperature=0.5,
+    extra_body={
+        "provider": {
+            "sort": "latency",
+            "allow_fallbacks": True,
+            "ignore": ["google-vertex"]
+        }
+    }
 )

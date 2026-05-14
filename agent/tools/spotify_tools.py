@@ -35,13 +35,13 @@ def get_playlists():
     return sc.get_my_playlists()
 
 @tool
-def play_playlist(playlist_name: str):
+def play_playlist_by_name(playlist_name: str):
     """
     Start playback of a playlist by its name.
     The argument playlist_name is a string containing the playlist's title (e.g., 'python' or 'Worlds').
     """
     logger.info(f"Calling tool: play_playlist (name='{playlist_name}')")
-    sc.play_playlist(playlist_name=playlist_name)
+    sc.play_playlist_by_name(playlist_name=playlist_name)
     
 @tool 
 def search_tracks(query: str):
@@ -77,7 +77,7 @@ def play_track_by_id(track_id: str):
     The argument track_id is a string (e.g., from search results).
     """
     logger.info(f"Calling tool: play_track_by_id (id='{track_id}')")
-    sc.play_by_id(track_id=track_id)
+    sc.play_track_by_id(track_id=track_id)
 
 @tool
 def play_playlist_by_id(playlist_id: str):
@@ -86,7 +86,7 @@ def play_playlist_by_id(playlist_id: str):
     The argument playlist_id is a string (e.g., from search results).
     """
     logger.info(f"Calling tool: play_playlist_by_id (id='{playlist_id}')")
-    sc.play_by_id(playlist_id=playlist_id)
+    sc.play_playlist_by_id(playlist_id=playlist_id)
     
 @tool
 def play_album_by_id(album_id: str):
@@ -95,7 +95,7 @@ def play_album_by_id(album_id: str):
     The argument album_id is a string (e.g., from search results).
     """
     logger.info(f"Calling tool: play_album_by_id (id='{album_id}')")
-    sc.play_by_id(album_id=album_id)
+    sc.play_album_by_id(album_id=album_id)
 
 @tool
 def set_repeat(mode: str = "context"):

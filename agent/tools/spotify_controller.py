@@ -56,7 +56,7 @@ class SpotifyController:
         logger.debug(f"Found playlists: {playlists}")
         return playlists
 
-    def play_playlist(self, playlist_name):
+    def play_playlist_by_name(self, playlist_name):
         logger.info(f"Attempting to play playlist: {playlist_name}")
         device_id = self.get_device_id()
         playlists = self.sp.current_user_playlists()
@@ -90,16 +90,18 @@ class SpotifyController:
         logger.info(f"Searching for playlists with query: {query}")
         results = self.sp.search(q=query, limit=limit, type='playlist')
         items = results['playlists']['items']
-        
+        print(items)
         filtered_playlists = []
         for playlist in items:
-            playlist_data = {
+            if playlist is None:
+                continue
+            track_data = {
                 'id': playlist['id'],
                 'name': playlist['name'],
                 'owner': playlist['owner']['display_name'],
                 'description': playlist['description']
             }
-            filtered_playlists.append(playlist_data)
+            filtered_playlists.append(track_data)
             
         logger.debug(f"Search found {len(filtered_playlists)} tracks")
         return filtered_playlists 
@@ -108,34 +110,18 @@ class SpotifyController:
         logger.info(f"Searching for albums with query: {query}")
         results = self.sp.search(q=query, limit=limit, type='album')
         items = results['albums']['items']
-        
         filtered_albums = []
         for album in items:
             album_data = {
-                'id': album['items']['id'],
-                'name': album['items']['name'],
-                'artist': album['items']['artists'][0]['name']
+                'id': album['id'],
+                'name': album['name'],
+                'artist': album['artists'][0]['name'],
+                'release_date': album['release_date']
             }
             filtered_albums.append(album_data)
             
         logger.debug(f"Search found {len(filtered_albums)} albums")
-        return filtered_albums
-
-    # def search_playlists(self, query, limit=10):
-    #     logger.info(f"Searching for playlists with query: {query}")
-    #     results = self.sp.search(q=query, limit=limit, type='playlist')
-    #     items = results['playlists']['items']
-        
-    #     filtered_playlists = []
-    #     for playlist in items:
-    #         track_data = {
-    #             'id': playlist['id'],
-    #             'name': playlist['name']
-    #         }
-    #         filtered_playlists.append(track_data)
-            
-    #     logger.debug(f"Search found {len(filtered_playlists)} tracks")
-    #     return filtered_playlists       
+        return filtered_albums   
     
     def play_track_by_id(self, track_id):
         logger.info(f"Playing track with ID: {track_id}")
@@ -148,29 +134,29 @@ class SpotifyController:
         logger.info(f"Playing track with ID: {playlist_id}")
         device_id = self.get_device_id()
         uri = f"spotify:playlist:{playlist_id}" if not playlist_id.startswith("spotify:") else playlist_id
-        self.sp.start_playback(device_id=device_id, uris=[uri])
+        self.sp.start_playback(device_id=device_id, context_uri=uri)
         return True
         
     def play_album_by_id(self, album_id):
         logger.info(f"Playing album with ID: {album_id}")
         device_id = self.get_device_id()
         uri = f"spotify:album:{album_id}" if not album_id.startswith("spotify:") else album_id
-        self.sp.start_playback(device_id=device_id, uris=[uri])
+        self.sp.start_playback(device_id=device_id, context_uri=uri)
         return True        
 
-    def play_specific_track(self, track_name_or_uri):
-        logger.info(f"Playing specific track: {track_name_or_uri}")
-        device_id = self.get_device_id()
-        if not track_name_or_uri.startswith('spotify:track:'):
-            tracks = self.search_tracks(track_name_or_uri, limit=1)
-            if not tracks:
-                logger.warning("Track not found")
-                return False
-            uri = f"spotify:track:{tracks[0]['id']}"
-        else:
-            uri = track_name_or_uri
-        self.sp.start_playback(device_id=device_id, uris=[uri])
-        return True
+    # def play_specific_track(self, track_name_or_uri):
+    #     logger.info(f"Playing specific track: {track_name_or_uri}")
+    #     device_id = self.get_device_id()
+    #     if not track_name_or_uri.startswith('spotify:track:'):
+    #         tracks = self.search_tracks(track_name_or_uri, limit=1)
+    #         if not tracks:
+    #             logger.warning("Track not found")
+    #             return False
+    #         uri = f"spotify:track:{tracks[0]['id']}"
+    #     else:
+    #         uri = track_name_or_uri
+    #     self.sp.start_playback(device_id=device_id, uris=[uri])
+    #     return True
 
     def pause(self):
         logger.info("Pausing playback")
@@ -197,8 +183,5 @@ class SpotifyController:
         device_id = self.get_device_id()
         self.sp.shuffle(state=state, device_id=device_id)
         return True
-    
-
         
-
-sc = SpotifyController(device_name="DESKTOP-PLNF0UP")
+sc = SpotifyController()
