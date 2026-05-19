@@ -35,7 +35,7 @@ graph_break_tools = ["pause",
                      "set_repeat",
                      "set_shuffle"]
 
-model = llama4_Scout.bind_tools(
+model = qwen35_flash.bind_tools(
     tools = tools
 )
 
