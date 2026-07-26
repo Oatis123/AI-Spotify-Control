@@ -30,8 +30,4 @@ RULES AND EXECUTION ALGORITHMS:
    - Step 2: Use the `id` from the first result and call `play_album_by_id(album_id="...")`.
 
 6. Response Format: No small talk. Keep responses concise, merely confirming the executed action (e.g., "Playing album [Name]", "Shuffle enabled").
-
-
-Current Spotify state:
-{curr_state}
 """
