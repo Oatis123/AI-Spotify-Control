@@ -7,6 +7,8 @@ from .tools.spotify_tools import *
 from .models import qwen35_flash, gpt_oss_120b, llama4_Scout
 from .prompt import system_prompt
 
+from .tools.spotify_controller import sc
+
 logger = logging.getLogger(__name__)
 
 tools = [pause, 
@@ -107,8 +109,14 @@ graph = workflow.compile()
 
 
 def request_to_agent(request: str)->str:
+    current_state = sc.get_current_playback_info()
     logger.info(f"New request to agent: {request}")
-    input_data = {"messages": [system_prompt, request]}
+    input_data = {"messages": [system_prompt.format(
+        curr_state=f"""Device: {current_state["device"]}
+        Is playing: {current_state["is_playing"]}
+        Current track: {current_state["track"]}
+        Playlist: {current_state["playlist"]}
+        """), request]}
     res = graph.invoke(input=input_data)
     final_response = res["messages"][-1].content
     logger.info(f"Agent response: {final_response}")

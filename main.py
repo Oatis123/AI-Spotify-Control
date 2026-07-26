@@ -4,6 +4,7 @@ import uvicorn
 import logging
 
 from agent.agent import request_to_agent
+from agent.tools.spotify_controller import sc
 
 logging.basicConfig(
     level=logging.INFO,
@@ -22,7 +23,10 @@ class CommandRequest(BaseModel):
 
 class CommandResponse(BaseModel):
     status: str
-    result: str
+    result: str    
+    
+class PlaybackResponse(BaseModel):
+    summary: str
 
 def run_agent_task(command: str):
     try:
@@ -41,6 +45,13 @@ async def execute_spotify_command(request: CommandRequest, background_tasks: Bac
     return CommandResponse(
         status="accepted",
         result=f"Command '{request.command}' accepted for background processing"
+    )
+
+@app.get("/playback_info", response_model=PlaybackResponse, tags=["Agent"])
+async def get_playback_info():
+    current_state = sc.get_current_playback_info()
+    return PlaybackResponse(
+        summary=current_state["summary"]
     )
 
 if __name__ == "__main__":
