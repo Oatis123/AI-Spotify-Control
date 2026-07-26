@@ -50,14 +50,9 @@ class SpotifyController:
         return device_id
     
     def get_current_playback_info(self):
-        """
-        Возвращает информацию о текущем воспроизведении:
-        устройство, статус (играет/пауза), название трека и плейлист (если есть).
-        """
         logger.info("Fetching current playback info")
         playback = self.sp.current_playback()
 
-        # Если Spotify вообще не активен (закрыт на всех устройствах)
         if not playback or not playback.get('device'):
             logger.debug("No active playback or device found")
             return None
@@ -65,7 +60,6 @@ class SpotifyController:
         device_name = playback['device']['name']
         is_playing = playback.get('is_playing', False)
 
-        # Если устройство активно, но ничего не играет
         if not is_playing or not playback.get('item'):
             return {
                 "device": device_name,
@@ -75,7 +69,6 @@ class SpotifyController:
                 "summary": f"Устройство: {device_name}. Сейчас ничего не играет."
             }
 
-        # Вытаскиваем название трека и исполнителя
         track_name = playback['item']['name']
         artists = ", ".join([artist['name'] for artist in playback['item']['artists']])
         track_full = f"{artists} - {track_name}"
@@ -83,16 +76,13 @@ class SpotifyController:
         playlist_name = None
         context = playback.get('context')
 
-        # Проверяем, играет ли трек в контексте плейлиста
         if context and context.get('type') == 'playlist':
             try:
-                # context['uri'] выглядит как 'spotify:playlist:ID'
                 playlist_info = self.sp.playlist(context['uri'])
                 playlist_name = playlist_info.get('name')
             except Exception as e:
                 logger.error(f"Failed to fetch playlist info: {e}")
 
-        # Формируем готовую строку для удобства (или для вывода агенту)
         if playlist_name:
             summary = f"Устройство: {device_name} | Плейлист: {playlist_name} | Трек: {track_full}"
         else:
